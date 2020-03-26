@@ -103,7 +103,7 @@ def simulate_airport(T=60*24*7):
 
         else:
             m, ctm = find_min(ct)
-            if ctm > t:
+            if ctm > T:
                 break
             t = ctm
 
