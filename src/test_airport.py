@@ -1,7 +1,5 @@
-from airport import serve_plane, plane_arrival
+from airport import simulate_airport
 
 
 if __name__ == "__main__":
-    time = 0
-    time += plane_arrival(1, time)
-    serve_plane(1, time)
+    simulate_airport()
