@@ -75,13 +75,18 @@ def simulate_airport(T=60*24*7):
     n = 0
 
     ct = [INF for _ in range(5)]    # Completion times for services. Starts in position 1
+    et = [0 for _ in range(5)]
 
     T0 = plane_arrival(time=t)    # First arrival
     ta = T0
 
+    total = 0
+
     while t < T:
 
         if ta == min([ta] + ct):
+            if ta > T:
+                break
             t = ta
             Na += 1
             print(f"{t}: Plane {Na} is arriving")
@@ -91,23 +96,31 @@ def simulate_airport(T=60*24*7):
                 for i, e in enumerate(SS):
                     if e == 0:
                         SS[i] = Na
+                        total += t - et[i]
                         ct[i] = serve_plane(Na, t)
                         break
             n += 1
 
         else:
             m, ctm = find_min(ct)
+            if ctm > t:
+                break
             t = ctm
-
 
             print(f"{t}: Plane {SS[m]} is taking off")
 
             if n <= 5:
                 SS[m] = 0
                 ct[m] = INF
+                et[i] = t
             else:
                 M = max(SS)
                 SS[m] = M + 1
                 ct[m] = serve_plane(SS[m], t)
 
             n -= 1
+
+    for i, e in enumerate(SS):
+        if not e:
+            total += T - et[i]
+    return total
