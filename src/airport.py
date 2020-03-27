@@ -1,29 +1,26 @@
 from src.random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform, random
 
 
-REPAIR_PROBABILITY = 0.1
+def plane_arrival(time, rate):
+    return time + gen_exp(rate)
 
+def plane_landing(time, rate):
+    return time +  gen_normal(mean=rate[0], var=rate[1])
 
-def plane_arrival(time):
-    return time + gen_exp(1/20)
+def plane_takeoff(time, rate):
+    return time + gen_normal(mean=rate[0], var=rate[1])
 
-def plane_landing(id, time):
-    return time +  gen_normal(mean=10, var=5)
+def plane_repair(time, rate):
+    return time + gen_exp(rate)
 
-def plane_takeoff(id, time):
-    return time + gen_normal(mean=10, var=5)
+def plane_needs_repair(repair_prob):
+    return random() < repair_prob
 
-def plane_repair(id, time):
-    return time + gen_exp(1/15)
+def plane_refuel(time, rate):
+    return time + gen_exp(rate)
 
-def plane_needs_repair():
-    return random() < REPAIR_PROBABILITY
-
-def plane_refuel(id, time):
-    return time + gen_exp(1/30)
-
-def plane_unload_load(id, time):
-    return time + gen_exp(1/30)
+def plane_unload_load(time, rate):
+    return time + gen_exp(rate)
 
 def plane_needs_load_unload():
     u1 = random()
@@ -32,20 +29,20 @@ def plane_needs_load_unload():
         return True
     return False
 
-def serve_plane(id=0, time=0):
+def serve_plane(time, landing_rate, refuel_rate, repair_rate, load_rate, takeoff_rate, repair_prob):
     """ Computes the time the plane remains on the landing track """
 
-    time = plane_landing(id, time)
+    time = plane_landing(time, landing_rate)
 
-    time = plane_refuel(id, time)
+    time = plane_refuel(time, refuel_rate)
 
     if plane_needs_load_unload():
-        time = plane_unload_load(id, time)
+        time = plane_unload_load(time, load_rate)
 
-    if plane_needs_repair():
-        time = plane_repair(id, time)
+    if plane_needs_repair(repair_prob):
+        time = plane_repair(time, repair_rate)
 
-    time = plane_takeoff(id, time)
+    time = plane_takeoff(time, takeoff_rate)
 
     return time
 
@@ -59,7 +56,7 @@ def find_min(A):
     return m, A[m]
 
 # T: time range
-def simulate_airport(T):
+def simulate_airport(T, arrival_rate=1/20, landing_rate=(10, 5), load_rate=1/30, repair_rate=1/15, refuel_rate=1/30, takeoff_rate=(10, 5), repair_prob=0.1):
     # Initilizing
     t = 0   # time global variable
     Na = 0  # number of arrivals
@@ -71,7 +68,7 @@ def simulate_airport(T):
     et = [0 for _ in range(5)]  # time after which the runway was empty
     totals = [0 for _ in range(5)]  # total time the runway No i has been empty
 
-    T0 = plane_arrival(time=t)    # first arrival
+    T0 = plane_arrival(t, arrival_rate)    # first arrival
     ta = T0
 
     while t < T:
@@ -87,7 +84,7 @@ def simulate_airport(T):
             #print(f"{t}: Plane {Na} is arriving")
 
             # compute next arrival
-            ta = plane_arrival(time=t)
+            ta = plane_arrival(t, arrival_rate)
 
             # if there is an empty runway:
             if n <= 4:
@@ -95,7 +92,7 @@ def simulate_airport(T):
                     if e == 0:
                         SS[i] = Na
                         totals[i] += t - et[i]
-                        ct[i] = serve_plane(Na, t)
+                        ct[i] = serve_plane(t, landing_rate, refuel_rate, repair_rate, load_rate, takeoff_rate, repair_prob)
                         break
             n += 1
 
@@ -120,7 +117,7 @@ def simulate_airport(T):
             else:
                 M = max(SS)
                 SS[m] = M + 1
-                ct[m] = serve_plane(SS[m], t)
+                ct[m] = serve_plane(t, landing_rate, refuel_rate, repair_rate, load_rate, takeoff_rate, repair_prob)
 
             n -= 1
 
