@@ -1,5 +1,5 @@
 from src.airport import simulate_airport
-import src.random_vars
+
 
 HOUR = 60
 DAY = 24 * HOUR

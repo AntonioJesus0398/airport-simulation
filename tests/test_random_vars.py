@@ -1,6 +1,5 @@
 from src.random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform
 
-
 M = 10000000
 
 def test_bernoulli():
@@ -62,10 +61,9 @@ def test_normal():
     print("test_normal: Accepted")
 
 
-if __name__ == "__main__":
+def run_tests():
     test_bernoulli()
     test_uniform()
     test_uniform(_discrete=True)
     test_exp()
     test_normal()
-
