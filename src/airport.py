@@ -1,4 +1,4 @@
-from random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform, random
+from src.random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform, random
 
 
 REPAIR_PROBABILITY = 0.1

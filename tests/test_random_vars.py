@@ -1,4 +1,4 @@
-from random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform
+from src.random_vars import gen_bernoulli, gen_exp, gen_normal, gen_uniform
 
 
 M = 10000000
