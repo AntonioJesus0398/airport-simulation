@@ -1,5 +1,19 @@
 from airport import simulate_airport
 
+HOUR = 60
+DAY = 24 * HOUR
+WEEK = 7 * DAY
+
 
 if __name__ == "__main__":
-    print(simulate_airport(T=60))
+    mean = 0
+    for _ in range(10000):
+        totals = simulate_airport(T=WEEK)
+        mean += sum(totals)
+    mean = mean / (10000 * 5)
+
+    days = mean/60//24
+    hours = (mean - days*24*60) // 60
+    minutes = (mean - days*24*60 - hours*60 )//1
+    print(f"Mean: {mean/60} hours")
+    print(f"{days} days, {hours} hours, {minutes} minutes")
