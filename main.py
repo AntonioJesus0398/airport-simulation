@@ -43,7 +43,7 @@ if __name__ == "__main__":
     for _ in range(nosim):
         totals = simulate_airport(T=time, arrival_rate=arrival, landing_rate=landing, load_rate=load, takeoff_rate=takeoff, refuel_rate=refuel, repair_rate=repair, repair_prob=repairprob)
         mean += sum(totals)
-    mean = mean / (10000 * 5)
+    mean = mean / (nosim * 5)
 
     days = mean/60//24
     hours = (mean - days*24*60) // 60
